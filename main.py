@@ -28,13 +28,14 @@ while running:
     pygame.draw.line(Screen, Constants.BLACK, Constants.start_pos_cuerda_1, Constants.end_pos_cuerda_1, 5)
     pygame.draw.rect(Screen, Constants.RED, (Constants.masa1_pos[0], Constants.masa1_pos[1], Constants.masa1_size, Constants.masa1_size))
     pygame.draw.line(Screen, Constants.BLACK, Constants.start_pos_cuerda_2, Constants.end_pos_cuerda_2, 5)
-    pygame.draw.rect(Screen, Constants.RED, (Constants.masa2_pos[0], Constants.masa2_pos[1], Constants.masa2_size, Constants.masa2_size))
-
     # Dibujar polea y barra
     pygame.draw.line(Screen, Constants.BLACK, (0, 20), (600, 20), 10)
     pygame.draw.line(Screen, Constants.BLACK, (Constants.polea_pos[0], Constants.polea_pos[1]), (Constants.polea_pos[0], Constants.polea_pos[1] - 80), 7)
     pygame.draw.circle(Screen, Constants.BLUE, Constants.polea_pos, Constants.polea_radius)
 
+    pygame.draw.circle(Screen, Constants.BLUE, Constants.polea1_pos, Constants.polea_radius)
+    
+    
     # Movimiento automático solo si el menú está oculto
     if not menu_visible:
         Move_Def.actualizar_movimiento()
