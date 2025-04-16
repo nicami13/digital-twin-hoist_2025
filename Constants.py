@@ -1,44 +1,67 @@
-#ALTO Y ANCHO DE LA PANTALLA 
-Alto=400
-ancho=400
-#COLORES
-WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-#LONGITUDES DE CUERDA
-longitud_cuerda_1 = 100
-longitud_cuerda_2 = 50
-longitud_cuerda_3 = 130
-longitud_cuerda_4= 187
-longitud_cuerda_5= 255
-contador_longitud_cuerda = 0
-#POSICION-CARACTERISTICAS POLEAS
-polea_pos = (150, 100)  
-polea_radius = 30       
-#POSICION_CARATERISRICAS POLEaS
-polea1_pos = (203, 150)
-polea2_pos = (230, 220) 
-polea3_pos = (258, 280) 
-#POSICION-CARACTERISTICAS CUERDAS
-start_pos_cuerda_1 = (125, 100)
-end_pos_cuerda_1 = (start_pos_cuerda_1[0], start_pos_cuerda_1[1] + longitud_cuerda_1)
-start_pos_cuerda_2 = (175, 100)
-end_pos_cuerda_2 = (start_pos_cuerda_2[0], start_pos_cuerda_2[1] + longitud_cuerda_2)
-start_pos_cuerda_3= (225, 20)
-end_pos_cuerda_3 = (start_pos_cuerda_3[0], start_pos_cuerda_3[1] + longitud_cuerda_3)
-start_pos_cuerda_4= (255,20)
-end_pos_cuerda_4=(start_pos_cuerda_4[0], start_pos_cuerda_4[1] + longitud_cuerda_4)
-start_pos_cuerda_5= (285,20)
-end_pos_cuerda_5=(start_pos_cuerda_5[0], start_pos_cuerda_5[1] + longitud_cuerda_5)
-Cuerda_6 = ((polea3_pos[0], polea3_pos[1]), (polea3_pos[0], polea3_pos[1] + 40))
+# Constants.py
 
-# Tamaño visual constante
-masa1_size = 40
-masa2_size = 40
-masa1_pos = (end_pos_cuerda_1[0]-masa1_size//2,end_pos_cuerda_1[1])
-#POSICION-CARACTERISTICAS MASA FINAL
-masa2_pos = (Cuerda_6[1][0] - masa2_size // 2, Cuerda_6[1][1])
-# Masa real (afecta el movimiento)
-masa1_valor = 40
-masa2_valor = 40
+# --- Pygame Setup ---
+Ancho = 800
+Alto = 600
+Blanco = (255, 255, 255)
+Negro = (0, 0, 0)
+Rojo = (255, 0, 0)
+Azul = (0, 0, 255)
+Verde = (0, 255, 0) # For effort mass
+
+# --- Simulation ---
+GRAVEDAD = 9.81
+ESCALA = 20       # Pixels per meter (adjust as needed)
+DT = 0.05         # Time step (smaller might be more stable)
+
+# --- Masses ---
+masa_carga_valor = 10.0  # Mass M (kg) - Load
+masa_esfuerzo_valor = 3.0 # Mass m (kg) - Effort
+
+# --- Components Sizes ---
+radio_polea = 20
+size_carga = (40, 40)
+size_esfuerzo = (30, 30)
+
+# --- Initial Positions (Example - Adjust these carefully!) ---
+# Top support structure (for drawing and anchoring)
+pos_soporte_y = 50
+pos_soporte_inicio_x = 100
+pos_soporte_fin_x = Ancho - 100
+
+# Fixed Pulley (Pulley 0 in analysis) - Attached to support
+pos_polea_fija = (Ancho // 2 - 100, pos_soporte_y + radio_polea) # Example X position
+
+# Movable Pulleys (Cluster attached to Load) - Initial Y position
+initial_movable_y = Alto // 2
+pos_poleas_moviles = [
+    (Ancho // 2 + 50, initial_movable_y),      # Top movable (P1)
+    (Ancho // 2 + 50, initial_movable_y + 60), # Middle movable (P2)
+    (Ancho // 2 + 50, initial_movable_y + 120) # Bottom movable (P3)
+]
+# Make sure movable pulleys are stored in a mutable list
+
+# Load (Attached below movable pulleys)
+pos_carga = (pos_poleas_moviles[-1][0] - size_carga[0] // 2, pos_poleas_moviles[-1][1] + radio_polea + 10) # Centered below last pulley
+
+# Effort Mass (Hangs from fixed pulley rope)
+pos_esfuerzo = (pos_polea_fija[0] - 150, Alto // 3) # Initial position
+
+# Rope Anchor Points on Top Support (Relative to pulley X positions maybe)
+# Based on diagram: Anchor1 -> P3 -> P0 -> P2 -> P1 -> Anchor2, Effort from P0
+anclaje_1_x = pos_polea_fija[0] + 100 # Example
+anclaje_2_x = pos_poleas_moviles[0][0] + 50 # Example
+pos_anclaje_1 = (anclaje_1_x, pos_soporte_y)
+pos_anclaje_2 = (anclaje_2_x, pos_soporte_y)
+
+
+# --- State Variables (Initial) ---
+# Store velocities globally or pass them around if preferred
+velocidad_carga = 0.0 # Vertical velocity of the load (m/s, positive up)
+# We derive effort velocity from load velocity
+
+# --- Boundaries ---
+limite_superior_carga = pos_soporte_y + radio_polea * 2 # Cannot hit fixed pulley support
+limite_inferior_carga = Alto - size_carga[1] - 10
+limite_superior_esfuerzo = pos_soporte_y + radio_polea * 2
+limite_inferior_esfuerzo = Alto - size_esfuerzo[1] - 10

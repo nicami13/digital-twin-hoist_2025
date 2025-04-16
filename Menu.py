@@ -4,10 +4,9 @@ import Constants
 pygame.init()
 fuente = pygame.font.SysFont("Arial", 20)
 
-# Variables de sliders
-masa1_valor = Constants.masa1_size
-masa2_valor = Constants.masa2_size
-slider_seleccionado = 0  
+masa1_valor = Constants.masa1_valor
+masa2_valor = Constants.masa2_valor
+slider_seleccionado = 0
 
 def alternar_menu_con_sliders(screen, visible, eventos):
     global masa1_valor, masa2_valor, slider_seleccionado
@@ -18,11 +17,9 @@ def alternar_menu_con_sliders(screen, visible, eventos):
     y = (Constants.Alto - alto_rectangulo) // 2
 
     if visible:
-        # Dibujar menú
         pygame.draw.rect(screen, (180, 180, 180), (x, y, ancho_rectangulo, alto_rectangulo))
         pygame.draw.rect(screen, (0, 0, 255), (x, y, ancho_rectangulo, alto_rectangulo), 4)
 
-        # --- Dibujar sliders ---
         def dibujar_slider(x_slider, y_slider, valor, max_valor, color, label):
             largo_slider = 200
             alto_slider = 6
@@ -37,7 +34,6 @@ def alternar_menu_con_sliders(screen, visible, eventos):
         dibujar_slider(x + 50, y + 60, masa1_valor, 100, (0, 100, 255), "Masa 1")
         dibujar_slider(x + 50, y + 130, masa2_valor, 100, (0, 150, 100), "Masa 2")
 
-        # --- Manejar eventos de teclado ---
         for event in eventos:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
@@ -55,7 +51,6 @@ def alternar_menu_con_sliders(screen, visible, eventos):
                     elif slider_seleccionado == 2 and masa2_valor > 0:
                         masa2_valor -= 1
 
-                # Actualizar valores en Constants
-                Constants.masa1_size = masa1_valor
-                Constants.masa2_size = masa2_valor
-
+        # Asignar valores reales a Constants (sin tocar tamaños visuales)
+        Constants.masa1_valor = masa1_valor
+        Constants.masa2_valor = masa2_valor
