@@ -2,7 +2,7 @@ import pygame
 import Constants
 import Move_Def
 import Menu
-import pymunk
+
 
 pygame.init()
 Screen = pygame.display.set_mode((Constants.ancho, Constants.Alto))
@@ -24,6 +24,9 @@ while running:
                 menu_visible = not menu_visible
 
     Screen.fill(Constants.WHITE)
+    
+    if not menu_visible:
+        Move_Def.actualizar_movimiento()
 
     # Dibujar cuerdas y masas
     pygame.draw.line(Screen, Constants.BLACK, Constants.start_pos_cuerda_1, Constants.end_pos_cuerda_1, 5)
@@ -51,8 +54,7 @@ while running:
     
     
     # Movimiento automático solo si el menú está oculto
-    if not menu_visible:
-        Move_Def.actualizar_movimiento()
+
 
     # Mostrar menú si está visible
     Menu.alternar_menu_con_sliders(Screen, menu_visible, eventos)

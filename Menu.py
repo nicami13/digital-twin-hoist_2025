@@ -52,5 +52,5 @@ def alternar_menu_con_sliders(screen, visible, eventos):
                         masa2_valor -= 1
 
         # Asignar valores reales a Constants (sin tocar tamaños visuales)
-        Constants.masa1_valor = masa1_valor
-        Constants.masa2_valor = masa2_valor
+        Constants.masa1_valor = masa2_valor
+        Constants.masa2_valor = masa1_valor

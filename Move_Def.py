@@ -1,81 +1,73 @@
 import Constants
-import math # For potential future tangent calculations
 
-# Use a global or pass/return velocity if needed
-# global velocidad_carga  -> Defined in Constants or main script
+GRAVEDAD = 9.81  # m/s²
+ESCALA = 0.25
+DT = 0.1
+
+# Variable de velocidad global
+velocidad = 0
 
 def actualizar_movimiento():
-    # Use the global velocity defined elsewhere
-    global velocidad_carga # m/s, positive UP for the load
+    global velocidad
 
-    m = Constants.masa_esfuerzo_valor # Effort mass
-    M = Constants.masa_carga_valor    # Load mass
+    m1 = Constants.masa1_valor
+    m2 = Constants.masa2_valor
 
-    # Calculate acceleration of the LOAD (R) upwards
-    denominator = M + 16 * m
-    if denominator == 0:
-        a_R = 0 # Prevent division by zero
-    else:
-        # Ensure GRAVEDAD is positive
-        g = abs(Constants.GRAVEDAD)
-        # Positive a_R means load accelerates UP
-        a_R = g * (4 * m - M) / denominator
+    if abs(m1 - m2) < 0.05:
+        velocidad = 0
+        return
 
-    # Update load velocity (physics space)
-    # v = v0 + a*t
-    velocidad_carga += a_R * Constants.DT
+    # Segunda Ley de Newton (masa 2 en polea móvil)
+    a = (m1 - m2) * GRAVEDAD / (m1 + m2)
+    velocidad += a * DT
 
-    # Calculate displacement of LOAD for this time step (physics space)
-    # dy = v*t (using updated velocity for Euler integration)
-    dy_R_metros = velocidad_carga * Constants.DT
+    # Desplazamiento en metros → píxeles
+    desplazamiento = velocidad * DT * ESCALA * 100
 
-    # Convert displacement to pixels (Pygame space: positive Y is DOWN)
-    # So positive dy_R_metros (up) means negative dy_pixels
-    dy_R_pixels = -dy_R_metros * Constants.ESCALA
+    # Masa 1 sube, masa 2 baja
+    nueva_masa1_y = Constants.masa1_pos[1] - desplazamiento
 
-    # Calculate displacement of EFFORT (moves 4 times further, downwards if load moves up)
-    dy_F_pixels = 4 * (-dy_R_pixels) # If load moves -10px (up), effort moves +40px (down)
+    # ⚠️ Masa 2 cuelga de polea móvil: polea baja la mitad del desplazamiento
+    nueva_polea3_y = Constants.polea3_pos[1] + desplazamiento / 2
+    nueva_masa2_y = nueva_polea3_y + Constants.polea_radius  # masa 2 bajo la polea
 
-    # --- Apply Movement and Boundaries ---
+    # Otras poleas bajan con polea3 (unidas)
+    delta_poleas = desplazamiento / 2
+    nueva_polea1_y = Constants.polea1_pos[1] + delta_poleas
+    nueva_polea2_y = Constants.polea2_pos[1] + delta_poleas
 
-    # Tentative new positions
-    nueva_carga_y = Constants.pos_carga[1] + dy_R_pixels
-    nueva_esfuerzo_y = Constants.pos_esfuerzo[1] + dy_F_pixels
+    # Verificamos límites para evitar que las masas se salgan
+    if (
+        nueva_masa1_y < 80 or nueva_masa1_y > Constants.Alto - 80 or
+        nueva_masa2_y < 80 or nueva_masa2_y > Constants.Alto - 80 or
+        nueva_polea1_y < Constants.polea_pos[1]+15 or
+        nueva_polea2_y < Constants.polea_pos[1]+15 or
+        nueva_polea3_y < Constants.polea_pos[1]+15
+    ):
+        return
 
-    # Store current movable pulley Y positions
-    current_movable_ys = [p[1] for p in Constants.pos_poleas_moviles]
-    nuevas_poleas_moviles_y = [y + dy_R_pixels for y in current_movable_ys]
+    # Actualizamos posiciones
+    Constants.masa1_pos = (Constants.masa1_pos[0], nueva_masa1_y)
+    Constants.polea3_pos = (Constants.polea3_pos[0], nueva_polea3_y)
+    Constants.masa2_pos = (Constants.masa2_pos[0], nueva_masa2_y)
+    Constants.polea1_pos = (Constants.polea1_pos[0], nueva_polea1_y)
+    Constants.polea2_pos = (Constants.polea2_pos[0], nueva_polea2_y)
 
-    # Boundary Checks (Simplified - check load and effort)
-    can_move = True
-    # Check load boundaries
-    if not (Constants.limite_superior_carga < nueva_carga_y < Constants.limite_inferior_carga):
-        can_move = False
-        velocidad_carga = 0 # Stop at boundary
+    # Cuerda 1: techo a masa1
+    Constants.end_pos_cuerda_1 = (
+        Constants.start_pos_cuerda_1[0],
+        Constants.masa1_pos[1]
+    )
 
-    # Check effort boundaries
-    if not (Constants.limite_superior_esfuerzo < nueva_esfuerzo_y < Constants.limite_inferior_esfuerzo):
-         # If effort hits boundary, load should also stop (rope connects them)
-        can_move = False
-        velocidad_carga = 0 # Stop at boundary
+    # Cuerdas entre poleas
+    Constants.end_pos_cuerda_2 = (Constants.start_pos_cuerda_2[0], Constants.polea1_pos[1])
+    Constants.end_pos_cuerda_3 = (Constants.start_pos_cuerda_3[0], Constants.polea1_pos[1])
+    Constants.end_pos_cuerda_4 = (Constants.start_pos_cuerda_4[0], Constants.polea2_pos[1])
+    Constants.end_pos_cuerda_5 = (Constants.start_pos_cuerda_5[0], Constants.polea3_pos[1])
 
-    # Check if movable pulleys hit fixed pulley (basic check)
-    if any(ny <= Constants.pos_polea_fija[1] + Constants.radio_polea for ny in nuevas_poleas_moviles_y):
-         can_move = False
-         velocidad_carga = 0 # Stop at boundary
+    # Cuerda que cuelga de polea3 hasta masa2
+    Constants.end_pos_cuerda_6 = (
+        Constants.polea3_pos,
+        (Constants.polea3_pos[0], Constants.masa2_pos[1])
+    )
 
-
-    # --- Update Positions if Movement is Allowed ---
-    if can_move:
-        # Update Load position
-        Constants.pos_carga = (Constants.pos_carga[0], nueva_carga_y)
-
-        # Update Effort position
-        Constants.pos_esfuerzo = (Constants.pos_esfuerzo[0], nueva_esfuerzo_y)
-
-        # Update Movable Pulleys position (THEY MOVE WITH THE LOAD)
-        for i in range(len(Constants.pos_poleas_moviles)):
-            Constants.pos_poleas_moviles[i] = (Constants.pos_poleas_moviles[i][0], nuevas_poleas_moviles_y[i])
-
-    # Note: Rope drawing happens separately in the drawing loop, based on
-    # the *updated* positions of pulleys, anchors, load, and effort.
