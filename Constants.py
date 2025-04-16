@@ -1,4 +1,4 @@
-
+import pygame
 # Dimensiones de la pantalla
 Alto = 400
 ancho = 400
@@ -54,3 +54,10 @@ end_pos_cuerda_5 = (start_pos_cuerda_5[0], polea3_pos[1])
 
 start_pos_cuerda_6 = (258-polea_radius/2, polea3_pos[1])
 end_pos_cuerda_6 = (polea3_pos[0], masa2_pos[1])
+
+#Diseños
+new_width = 2 * polea_radius  
+new_height = 2 * polea_radius 
+polea_img = pygame.image.load("polea.png")
+polea_img = pygame.transform.scale(polea_img, (2 * polea_radius, 2 * polea_radius))
+
