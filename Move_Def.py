@@ -3,6 +3,7 @@ import Constants
 GRAVEDAD = 9.81  # m/s²
 ESCALA = 0.25
 DT = 0.1
+n = 3  # Número de poleas móviles (2^n segmentos)
 
 # Variable de velocidad global
 velocidad = 0
@@ -13,25 +14,30 @@ def actualizar_movimiento():
     m1 = Constants.masa1_valor
     m2 = Constants.masa2_valor
 
-    if abs(m1 - m2) < 0.05:
+    # Verificar si está en equilibrio (sin movimiento)
+    if abs(m1 - m2 / (2 ** n)) < 0.01:
         velocidad = 0
         return
 
-    # Segunda Ley de Newton (masa 2 en polea móvil)
-    a = (m1 - m2) * GRAVEDAD / (m1 + m2)
+    # Fuerza efectiva de m2 con polipasto (R)
+    F_teorica = (m2 * GRAVEDAD) / (2 ** n)
+
+    # Fuerza generada por m1 (F)
+    F_real = m1 * GRAVEDAD
+
+    # Aceleración del sistema
+    a = (F_teorica - F_real) / (m1 + m2)
     velocidad += a * DT
 
-    # Desplazamiento en metros → píxeles
+    # Desplazamiento en metros → píxeles (signo incluido)
     desplazamiento = velocidad * DT * ESCALA * 100
 
-    # Masa 1 sube, masa 2 baja
+    # Movimiento según dirección real (positivo o negativo)
     nueva_masa1_y = Constants.masa1_pos[1] - desplazamiento
-
-    # ⚠️ Masa 2 cuelga de polea móvil: polea baja la mitad del desplazamiento
     nueva_polea3_y = Constants.polea3_pos[1] + desplazamiento / 2
-    nueva_masa2_y = nueva_polea3_y + Constants.polea_radius  # masa 2 bajo la polea
+    nueva_masa2_y = nueva_polea3_y + Constants.polea_radius
 
-    # Otras poleas bajan con polea3 (unidas)
+    # Las otras poleas bajan o suben junto con polea3
     delta_poleas = desplazamiento / 2
     nueva_polea1_y = Constants.polea1_pos[1] + delta_poleas
     nueva_polea2_y = Constants.polea2_pos[1] + delta_poleas
@@ -40,9 +46,9 @@ def actualizar_movimiento():
     if (
         nueva_masa1_y < 80 or nueva_masa1_y > Constants.Alto - 80 or
         nueva_masa2_y < 80 or nueva_masa2_y > Constants.Alto - 80 or
-        nueva_polea1_y < Constants.polea_pos[1]+15 or
-        nueva_polea2_y < Constants.polea_pos[1]+15 or
-        nueva_polea3_y < Constants.polea_pos[1]+15
+        nueva_polea1_y < Constants.polea_pos[1] + 15 or
+        nueva_polea2_y < Constants.polea_pos[1] + 15 or
+        nueva_polea3_y < Constants.polea_pos[1] + 15
     ):
         return
 
@@ -53,21 +59,13 @@ def actualizar_movimiento():
     Constants.polea1_pos = (Constants.polea1_pos[0], nueva_polea1_y)
     Constants.polea2_pos = (Constants.polea2_pos[0], nueva_polea2_y)
 
-    # Cuerda 1: techo a masa1
-    Constants.end_pos_cuerda_1 = (
-        Constants.start_pos_cuerda_1[0],
-        Constants.masa1_pos[1]
-    )
-
-    # Cuerdas entre poleas
+    # Actualizamos posiciones de las cuerdas
+    Constants.end_pos_cuerda_1 = (Constants.start_pos_cuerda_1[0], Constants.masa1_pos[1])
     Constants.end_pos_cuerda_2 = (Constants.start_pos_cuerda_2[0], Constants.polea1_pos[1])
     Constants.end_pos_cuerda_3 = (Constants.start_pos_cuerda_3[0], Constants.polea1_pos[1])
     Constants.end_pos_cuerda_4 = (Constants.start_pos_cuerda_4[0], Constants.polea2_pos[1])
     Constants.end_pos_cuerda_5 = (Constants.start_pos_cuerda_5[0], Constants.polea3_pos[1])
-
-    # Cuerda que cuelga de polea3 hasta masa2
     Constants.end_pos_cuerda_6 = (
         Constants.polea3_pos,
         (Constants.polea3_pos[0], Constants.masa2_pos[1])
     )
-

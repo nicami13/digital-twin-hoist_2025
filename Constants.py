@@ -10,8 +10,8 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 
 # Masa real (afecta el movimiento)
-masa1_valor = 40
-masa2_valor = 40
+masa1_valor = 10
+masa2_valor = 100
 
 # Tamaño visual constante
 masa1_size = 40
