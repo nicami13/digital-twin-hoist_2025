@@ -9,8 +9,8 @@ pygame.init()
 Screen = pygame.display.set_mode((Constants.ancho, Constants.Alto))
 BackGround= pygame.image.load('fondo.jpeg')
 BackGround= pygame.transform.scale(BackGround,(Constants.ancho,Constants.Alto))
-Techo= pygame.image.load('techo.jpeg')
-Techo=pygame.transform.scale(Techo,(Constants.ancho,25))
+
+
 
 Clock = pygame.time.Clock()
 simulation_time = 0
@@ -39,8 +39,10 @@ while running:
     pygame.draw.line(Screen, Constants.BLACK, Constants.start_pos_cuerda_1, Constants.end_pos_cuerda_1, 5)
     pygame.draw.rect(Screen, Constants.RED, (Constants.masa1_pos[0], Constants.masa1_pos[1], Constants.masa1_size, Constants.masa1_size))
     pygame.draw.line(Screen, Constants.BLACK, Constants.start_pos_cuerda_2, Constants.end_pos_cuerda_2, 5)
-    # Dibujar polea y barra
-    #pygame.draw.line(Screen, Constants.BLACK, (0, 10), (600, 10), 25)
+    #Dibujar techo
+    Techo= pygame.image.load('techo.jpeg')
+    Techo=pygame.transform.scale(Techo,(Constants.ancho,20))
+    Screen.blit(Techo,(0, 0))
     
     pygame.draw.line(Screen, Constants.BLACK, (Constants.polea_pos[0], Constants.polea_pos[1]), (Constants.polea_pos[0], Constants.polea_pos[1] - 80), 5)
     Screen.blit(Constants.polea_img, (Constants.polea_pos[0] - Constants.polea_radius, Constants.polea_pos[1] - Constants.polea_radius))
@@ -57,13 +59,6 @@ while running:
     pygame.draw.line(Screen, Constants.BLACK, ((Constants.polea3_pos[0]), Constants.polea3_pos[1]), (Constants.polea3_pos[0], Constants.polea3_pos[1] + 40), 5)
     Screen.blit(Constants.polea_img, (Constants.polea3_pos[0] - Constants.polea_radius, Constants.polea3_pos[1] - Constants.polea_radius))
     pygame.draw.rect(Screen, Constants.RED, (Constants.masa2_pos[0], Constants.masa2_pos[1], Constants.masa2_size, Constants.masa2_size))
-    
-    
-    
-    
-    # Movimiento automático solo si el menú está oculto
-
-
     # Mostrar menú si está visible
     Menu.alternar_menu_con_sliders(Screen, menu_visible, eventos)
 
