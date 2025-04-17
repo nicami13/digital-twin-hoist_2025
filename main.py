@@ -63,6 +63,8 @@ while running:
     Menu.alternar_menu_con_sliders(Screen, menu_visible, eventos)
 
     # Actualizar pantalla
+    Move_Def.dibujar_info_velocidad(Screen)
+    Move_Def.dibujar_info_aceleracion(Screen)
     Screen.blit(Techo,(0, 10))
     pygame.display.flip()
 

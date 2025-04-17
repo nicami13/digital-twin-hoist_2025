@@ -3,6 +3,12 @@ import pygame
 Alto = 400
 ancho = 400
 
+input_texto_velocidad = ""
+input_texto_masa2 = ""
+velocidad_deseada = 0
+definir_input = "velocidad"
+
+
 # Colores
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
@@ -10,8 +16,8 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 
 # Masa real (afecta el movimiento)
-masa1_valor = 10
-masa2_valor = 100
+masa1_valor = 26.87
+masa2_valor = 211
 
 # Tamaño visual constante
 masa1_size = 40
