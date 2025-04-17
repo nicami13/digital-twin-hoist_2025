@@ -7,6 +7,9 @@ import sys
 
 pygame.init()
 Screen = pygame.display.set_mode((Constants.ancho, Constants.Alto))
+icon = pygame.image.load("icono.png")
+pygame.display.set_icon(icon)
+pygame.display.set_caption("Pulley Simulator")
 BackGround= pygame.image.load('fondo.jpeg')
 BackGround= pygame.transform.scale(BackGround,(Constants.ancho,Constants.Alto))
 
@@ -21,6 +24,7 @@ while running:
     dt = Clock.tick(60)  # 60 FPS
     simulation_time += dt
     Screen.fill((255, 255, 255))
+    
 
     eventos = pygame.event.get()
     for event in eventos:
@@ -63,6 +67,7 @@ while running:
     Menu.alternar_menu_con_sliders(Screen, menu_visible, eventos)
 
     # Actualizar pantalla
+    
     Move_Def.dibujar_info_velocidad(Screen)
     Move_Def.dibujar_info_aceleracion(Screen)
     Screen.blit(Techo,(0, 10))
