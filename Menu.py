@@ -167,6 +167,7 @@ def alternar_menu_con_sliders(screen, visible, eventos):
                     Constants.velocidad_deseada = 0
                     Constants.masa1_valor = 0
                     Constants.masa2_valor = 0
+                
             elif definir_input == "masa2":
                 Constants.masa2_valor = float(input_texto_masa2 or 0)
                 velocidad_deseada = Constants.masa2_valor / 8
@@ -274,7 +275,7 @@ def alternar_menu_con_sliders(screen, visible, eventos):
         screen.blit(fuente_titulo.render("Tensiones en Cables", True, (0, 0, 0)), (x + 40, y + 10))
 
         gravedad = 9.8
-        R = masa2_valor * gravedad
+        R = Constants.masa2_valor * gravedad
         tensiones = [R / 2, R / 2, R / 4, R / 4, R / 8, R / 8]
 
         for i, t in enumerate(tensiones):
