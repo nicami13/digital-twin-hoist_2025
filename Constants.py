@@ -1,5 +1,6 @@
 import pygame
 # Dimensiones de la pantalla
+Frames=60
 Alto = 400
 ancho = 400
 
@@ -16,8 +17,8 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 
 # Masa real (afecta el movimiento)
-masa1_valor = 26.87
-masa2_valor = 211
+masa1_valor = 0
+masa2_valor = 0
 
 # Tamaño visual constante
 masa1_size = 40

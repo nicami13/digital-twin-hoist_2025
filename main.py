@@ -21,8 +21,8 @@ running = True
 menu_visible = False
 
 while running:
-    dt = Clock.tick(60)  # 60 FPS
-    simulation_time += dt
+    dt = Clock.tick(Constants.Frames)  
+    simulation_time = 1.0/Constants.Frames
     Screen.fill((255, 255, 255))
     
 

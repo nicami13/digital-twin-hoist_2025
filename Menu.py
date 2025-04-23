@@ -156,14 +156,30 @@ def alternar_menu_con_sliders(screen, visible, eventos):
         try:
             if definir_input == "velocidad":
                 velocidad_deseada = float(input_texto_velocidad or 0)
-                Constants.masa2_valor = velocidad_deseada * 8
-                Constants.masa1_valor = velocidad_deseada * 2.5
-                input_texto_masa2 = f"{Constants.masa2_valor:.2f}"
+                if -3 <= velocidad_deseada <= 3:
+                    Constants.masa2_valor = velocidad_deseada * 8
+                    Constants.masa1_valor = velocidad_deseada * 2.5
+                    input_texto_masa2 = f"{Constants.masa2_valor:.2f}"
+                    mostrar_error = False  # Resetear el error si el valor es válido
+                else:
+                    mostrar_error = True
+                    mensaje_error = "Haz generado una falla en el sistema: ruptura de cuerda 1 o cuerda 6"
+                    Constants.velocidad_deseada = 0
+                    Constants.masa1_valor = 0
+                    Constants.masa2_valor = 0
             elif definir_input == "masa2":
                 Constants.masa2_valor = float(input_texto_masa2 or 0)
                 velocidad_deseada = Constants.masa2_valor / 8
-                Constants.masa1_valor = velocidad_deseada * 2.5
-                input_texto_velocidad = f"{velocidad_deseada:.2f}"
+                if -3 <= velocidad_deseada <= 3:
+                    Constants.masa1_valor = velocidad_deseada * 2.5
+                    input_texto_velocidad = f"{velocidad_deseada:.2f}"
+                    mostrar_error = False  # Resetear el error si el valor es válido
+                else:
+                    mostrar_error = True
+                    mensaje_error = "Haz generado una falla en el sistema: ruptura de cuerda 1 o cuerda 6"
+                    Constants.velocidad_deseada = 0
+                    Constants.masa1_valor = 0
+                    Constants.masa2_valor = 0
         except:
             Constants.masa1_valor = 0
             Constants.masa2_valor = 0
@@ -197,13 +213,16 @@ def alternar_menu_con_sliders(screen, visible, eventos):
 
                 if event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                     try:
-                        if -2 <= velocidad_deseada <= 2:
+                        if -3 <= velocidad_deseada <= 3:
                             mostrar_resultado_calculo = True
                             mostrar_recuadro_principal = True
-                            mostrar_error = False
+                            mostrar_error = False  # Resetear el error al validar
                         else:
                             mostrar_error = True
                             mensaje_error = "Haz generado una falla en el sistema: ruptura de cuerda 1 o cuerda 6"
+                            Constants.velocidad_deseada = 0
+                            Constants.masa1_valor = 0
+                            Constants.masa2_valor = 0
                     except:
                         mostrar_error = True
                         mensaje_error = "Entrada inválida"
@@ -213,6 +232,9 @@ def alternar_menu_con_sliders(screen, visible, eventos):
                         if not (-3 <= velocidad_deseada <= 3):
                             mostrar_error = True
                             mensaje_error = "Haz generado una falla en el sistema: ruptura de cuerda 1 o cuerda 6"
+                            Constants.velocidad_deseada = 0
+                            Constants.masa1_valor = 0
+                            Constants.masa2_valor = 0
                         else:
                             menu_expandido = False
                             mostrar_resultado_calculo = False
@@ -228,19 +250,19 @@ def alternar_menu_con_sliders(screen, visible, eventos):
                     definir_input = "masa2"
                 elif boton_realizar_calculo.collidepoint(event.pos):
                     try:
-                        if -2 <= velocidad_deseada <= 2:
+                        if -3 <= velocidad_deseada <= 3:
                             mostrar_resultado_calculo = True
                             mostrar_recuadro_principal = True
-                            mostrar_error = False
+                            mostrar_error = False  # Resetear el error al hacer clic en aplicar
                         else:
                             mostrar_error = True
                             mensaje_error = "Haz generado una falla en el sistema: ruptura de cuerda 1 o cuerda 6"
+                            Constants.velocidad_deseada = 0
+                            Constants.masa1_valor = 0
+                            Constants.masa2_valor = 0
                     except:
                         mostrar_error = True
                         mensaje_error = "Entrada inválida"
-
-
-
 
     elif visible and menu_expandido and modo_menu == "tensiones":
         ancho_rect, alto_rect = 350, 280
